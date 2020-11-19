@@ -30,6 +30,10 @@
         {
             this.TabControl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ServerIconPreview = new System.Windows.Forms.PictureBox();
+            this.ServerIconBrowseButton = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.ServerIconTextBox = new System.Windows.Forms.TextBox();
             this.PaperVersion = new System.Windows.Forms.ComboBox();
             this.CopyIPCheckbox = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -39,22 +43,18 @@
             this.label1 = new System.Windows.Forms.Label();
             this.FolderPathTextBox = new System.Windows.Forms.TextBox();
             this.Extra = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.SeedBox = new System.Windows.Forms.TextBox();
             this.oxyMode = new System.Windows.Forms.Button();
             this.CreateButton = new System.Windows.Forms.Button();
             this.FolderPathSaveFile = new System.Windows.Forms.SaveFileDialog();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.ProgressLog = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.ServerIconBrowseButton = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.ServerIconTextBox = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.ServerIconPreview = new System.Windows.Forms.PictureBox();
             this.TabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.Extra.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ServerIconPreview)).BeginInit();
+            this.Extra.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabControl
@@ -88,6 +88,46 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basic Config";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // ServerIconPreview
+            // 
+            this.ServerIconPreview.Location = new System.Drawing.Point(5, 161);
+            this.ServerIconPreview.Name = "ServerIconPreview";
+            this.ServerIconPreview.Size = new System.Drawing.Size(32, 32);
+            this.ServerIconPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.ServerIconPreview.TabIndex = 13;
+            this.ServerIconPreview.TabStop = false;
+            // 
+            // ServerIconBrowseButton
+            // 
+            this.ServerIconBrowseButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.ServerIconBrowseButton.Location = new System.Drawing.Point(139, 192);
+            this.ServerIconBrowseButton.Name = "ServerIconBrowseButton";
+            this.ServerIconBrowseButton.Size = new System.Drawing.Size(75, 23);
+            this.ServerIconBrowseButton.TabIndex = 12;
+            this.ServerIconBrowseButton.Text = "Browse...";
+            this.ServerIconBrowseButton.UseVisualStyleBackColor = true;
+            this.ServerIconBrowseButton.Click += new System.EventHandler(this.ServerIconBrowseButton_Click);
+            // 
+            // label5
+            // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(145, 150);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(62, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Server Icon";
+            // 
+            // ServerIconTextBox
+            // 
+            this.ServerIconTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.ServerIconTextBox.Location = new System.Drawing.Point(42, 166);
+            this.ServerIconTextBox.Name = "ServerIconTextBox";
+            this.ServerIconTextBox.ReadOnly = true;
+            this.ServerIconTextBox.Size = new System.Drawing.Size(269, 20);
+            this.ServerIconTextBox.TabIndex = 10;
+            this.ServerIconTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // PaperVersion
             // 
@@ -177,7 +217,7 @@
             // Extra
             // 
             this.Extra.Controls.Add(this.label4);
-            this.Extra.Controls.Add(this.textBox1);
+            this.Extra.Controls.Add(this.SeedBox);
             this.Extra.Controls.Add(this.oxyMode);
             this.Extra.Location = new System.Drawing.Point(4, 22);
             this.Extra.Name = "Extra";
@@ -187,12 +227,22 @@
             this.Extra.Text = "Extra Settings";
             this.Extra.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // label4
             // 
-            this.textBox1.Location = new System.Drawing.Point(43, 19);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(266, 20);
-            this.textBox1.TabIndex = 1;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(160, 3);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(32, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Seed";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // SeedBox
+            // 
+            this.SeedBox.Location = new System.Drawing.Point(43, 19);
+            this.SeedBox.Name = "SeedBox";
+            this.SeedBox.Size = new System.Drawing.Size(266, 20);
+            this.SeedBox.TabIndex = 1;
             // 
             // oxyMode
             // 
@@ -241,60 +291,10 @@
             this.ProgressLog.Size = new System.Drawing.Size(340, 90);
             this.ProgressLog.TabIndex = 12;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(160, 3);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(32, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Seed";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ServerIconBrowseButton
-            // 
-            this.ServerIconBrowseButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.ServerIconBrowseButton.Location = new System.Drawing.Point(139, 192);
-            this.ServerIconBrowseButton.Name = "ServerIconBrowseButton";
-            this.ServerIconBrowseButton.Size = new System.Drawing.Size(75, 23);
-            this.ServerIconBrowseButton.TabIndex = 12;
-            this.ServerIconBrowseButton.Text = "Browse...";
-            this.ServerIconBrowseButton.UseVisualStyleBackColor = true;
-            this.ServerIconBrowseButton.Click += new System.EventHandler(this.ServerIconBrowseButton_Click);
-            // 
-            // label5
-            // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(145, 150);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 13);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Server Icon";
-            // 
-            // ServerIconTextBox
-            // 
-            this.ServerIconTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.ServerIconTextBox.Location = new System.Drawing.Point(42, 166);
-            this.ServerIconTextBox.Name = "ServerIconTextBox";
-            this.ServerIconTextBox.ReadOnly = true;
-            this.ServerIconTextBox.Size = new System.Drawing.Size(269, 20);
-            this.ServerIconTextBox.TabIndex = 10;
-            this.ServerIconTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // OpenFileDialog
             // 
             this.OpenFileDialog.FileName = "server-icon.png";
             this.OpenFileDialog.Filter = "PNG Files|*.png";
-            // 
-            // ServerIconPreview
-            // 
-            this.ServerIconPreview.Location = new System.Drawing.Point(5, 161);
-            this.ServerIconPreview.Name = "ServerIconPreview";
-            this.ServerIconPreview.Size = new System.Drawing.Size(32, 32);
-            this.ServerIconPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.ServerIconPreview.TabIndex = 13;
-            this.ServerIconPreview.TabStop = false;
             // 
             // MCServerInstaller
             // 
@@ -316,9 +316,9 @@
             this.TabControl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ServerIconPreview)).EndInit();
             this.Extra.ResumeLayout(false);
             this.Extra.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ServerIconPreview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -342,7 +342,7 @@
         private System.Windows.Forms.TabPage Extra;
         private System.Windows.Forms.Button oxyMode;
         private System.Windows.Forms.ComboBox PaperVersion;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox SeedBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button ServerIconBrowseButton;
         private System.Windows.Forms.Label label5;

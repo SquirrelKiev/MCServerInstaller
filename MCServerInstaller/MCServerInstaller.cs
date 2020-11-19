@@ -16,6 +16,7 @@ namespace MCServerInstaller
         private static string rootDir;
         private static string MCVersion;
         private static string MOTD;
+        private static string Seed;
         private static string paperJar = "paper.jar";
 
         private static string[] ProgressLogLang = new string[] { "Downloading paper.jar...", "Creating start.bat...", "Agreeing to EULA...", "Creating server.properties...", "Copying server-icon.png...", "Getting IP... ", "IP found! Your IP is ", "Done! You can now close the program. " };
@@ -25,7 +26,6 @@ namespace MCServerInstaller
         private static Uri paperUri;
 
         Image ResizedServerIcon = Properties.Resources.server_icon;
-        private string paperJson;
 
         public MCServerInstaller()
         {
@@ -81,6 +81,7 @@ namespace MCServerInstaller
         private void ContinueDoingShit(object sender, EventArgs e)
         {
             MOTD = MOTDTextBox.Text;
+            Seed = SeedBox.Text;
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[1]);
             File.WriteAllText(Path.Combine(rootDir, "start.bat"), "@echo off\r\njava -Xmx1024M -Xms1024M -jar " + paperJar + " nogui\r\npause");
@@ -89,7 +90,7 @@ namespace MCServerInstaller
             File.WriteAllText(Path.Combine(rootDir, "eula.txt"), "eula=true");
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[3]);
-            File.WriteAllText(Path.Combine(rootDir, "server.properties"), "motd=" + MOTD + "\r\nspawn-protection=0");
+            File.WriteAllText(Path.Combine(rootDir, "server.properties"), "motd=" + MOTD + "\r\nspawn-protection=0" + "\r\nlevel-seed=" + Seed);
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[4]);
             ResizedServerIcon.Save(Path.Combine(rootDir, "server-icon.png"), ImageFormat.Png);
@@ -163,24 +164,27 @@ namespace MCServerInstaller
 
         private void LoadPaperVersions()
         {
-            WebClient webClient = new WebClient();
+            string paperJson;
+
             try
             {
+                WebClient webClient = new WebClient();
                 paperJson = webClient.DownloadString("https://papermc.io/api/v1/paper");
                 webClient.Dispose();
+
+                PaperVersions deserPaperJson = JsonConvert.DeserializeObject<PaperVersions>(paperJson);
+                PaperVersion.Items.Clear();
+                foreach (string item in deserPaperJson.Versions)
+                {
+                    PaperVersion.Items.Add(item);
+                }
+                PaperVersion.SelectedIndex = 0;
             }
             catch
             {
                 MessageBox.Show("Connect to the internet nerd");
                 Environment.Exit(2);
             }
-            PaperVersions deserPaperJson = JsonConvert.DeserializeObject<PaperVersions>(paperJson);
-            PaperVersion.Items.Clear();
-            foreach (string item in deserPaperJson.Versions)
-            {
-                PaperVersion.Items.Add(item);
-            }
-            PaperVersion.SelectedIndex = 0;
         }
 
         private Bitmap ResizeImage(Image image, int width, int height)
