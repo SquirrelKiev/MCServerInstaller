@@ -166,7 +166,7 @@ namespace MCServerInstaller
             WebClient webClient = new WebClient();
             try
             {
-                string paperJson = webClient.DownloadString("https://papermc.io/api/v1/paper");
+                paperJson = webClient.DownloadString("https://papermc.io/api/v1/paper");
                 webClient.Dispose();
             }
             catch
