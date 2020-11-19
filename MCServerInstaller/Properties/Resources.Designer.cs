@@ -81,12 +81,12 @@ namespace MCServerInstaller.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] server_icon {
+        internal static System.Drawing.Bitmap server_icon {
             get {
                 object obj = ResourceManager.GetObject("server_icon", resourceCulture);
-                return ((byte[])(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

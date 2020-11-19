@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace MCServerInstaller
 {
@@ -16,11 +18,14 @@ namespace MCServerInstaller
         private static string MOTD;
         private static string paperJar = "paper.jar";
 
-        private static string[] ProgressLogLang = new string[] { "Downloading paper.jar...", "Creating start.bat...", "Agreeing to EULA...", "Creating server.properties...", "Copying server-icon.png...","Getting IP... ", "IP found! Your IP is ", "Done! You can now close the program. "};
+        private static string[] ProgressLogLang = new string[] { "Downloading paper.jar...", "Creating start.bat...", "Agreeing to EULA...", "Creating server.properties...", "Copying server-icon.png...", "Getting IP... ", "IP found! Your IP is ", "Done! You can now close the program. " };
 
         private static readonly Image[] oxyBG = new Image[] { Properties.Resources.pride, Properties.Resources.pant };
 
         private static Uri paperUri;
+
+        Image ResizedServerIcon = Properties.Resources.server_icon;
+        private string paperJson;
 
         public MCServerInstaller()
         {
@@ -78,16 +83,16 @@ namespace MCServerInstaller
             MOTD = MOTDTextBox.Text;
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[1]);
-            File.WriteAllText(Path.Combine(rootDir,"start.bat"),"@echo off\r\njava -Xmx1024M -Xms1024M -jar " + paperJar + " nogui\r\npause");
+            File.WriteAllText(Path.Combine(rootDir, "start.bat"), "@echo off\r\njava -Xmx1024M -Xms1024M -jar " + paperJar + " nogui\r\npause");
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[2]);
             File.WriteAllText(Path.Combine(rootDir, "eula.txt"), "eula=true");
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[3]);
-            File.WriteAllText(Path.Combine(rootDir,"server.properties"), "motd=" + MOTD + "\r\nspawn-protection=0");
+            File.WriteAllText(Path.Combine(rootDir, "server.properties"), "motd=" + MOTD + "\r\nspawn-protection=0");
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[4]);
-            File.WriteAllBytes(Path.Combine(rootDir,"server-icon.png"), Properties.Resources.server_icon);
+            ResizedServerIcon.Save(Path.Combine(rootDir, "server-icon.png"), ImageFormat.Png);
 
             if (CopyIPCheckbox.Checked)
             {
@@ -152,15 +157,23 @@ namespace MCServerInstaller
             FolderPathSaveFile.FileName = "cum.in.this.directory";
             FolderPathSaveFile.Title = "the cum directory";
 
-            ProgressLogLang = new string[] { "downloading biblbe.jart...","making epic gamer totally not virus rat...", "forging documents...", "typing gamer words into gamer file...", "applying porn to server icon...", "getting the 3 wacky numbers on the back... ", "IP found! Your IP is being set to russian hackers, also this \r\n", "kill program fatass" }; ;
+            ProgressLogLang = new string[] { "downloading biblbe.jart...", "making epic gamer totally not virus rat...", "forging documents...", "typing gamer words into gamer file...", "applying porn to server icon...", "getting the 3 wacky numbers on the back... ", "IP found! Your IP is being set to russian hackers, also this \r\n", "kill program fatass" }; ;
             paperJar = "biblbe.jar";
         }
 
         private void LoadPaperVersions()
         {
             WebClient webClient = new WebClient();
-            string paperJson = webClient.DownloadString("https://papermc.io/api/v1/paper");
-            webClient.Dispose();
+            try
+            {
+                string paperJson = webClient.DownloadString("https://papermc.io/api/v1/paper");
+                webClient.Dispose();
+            }
+            catch
+            {
+                MessageBox.Show("Connect to the internet nerd");
+                Environment.Exit(2);
+            }
             PaperVersions deserPaperJson = JsonConvert.DeserializeObject<PaperVersions>(paperJson);
             PaperVersion.Items.Clear();
             foreach (string item in deserPaperJson.Versions)
@@ -169,10 +182,50 @@ namespace MCServerInstaller
             }
             PaperVersion.SelectedIndex = 0;
         }
+
+        private Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+                return destImage;
+            }
+        }
+
+        private void ServerIconBrowseButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog.ShowDialog();
+            ServerIconTextBox.Text = OpenFileDialog.FileName;
+            try
+            {
+                ResizedServerIcon = ResizeImage(Image.FromFile(ServerIconTextBox.Text), 64, 64);
+                ServerIconPreview.Image = ResizedServerIcon;
+            }
+            catch
+            {
+                MessageBox.Show("Not an Image file. Nice. ");
+            }
+        }
     }
+
     public class PaperVersions
     {
-//        public string Project { get; set; }
+        public string Project { get; set; }
         public IList<string> Versions { get; set; }
     }
 }
