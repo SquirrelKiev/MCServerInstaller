@@ -51,6 +51,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.ProgressLog = new System.Windows.Forms.TextBox();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.SkipPaperDownload = new System.Windows.Forms.CheckBox();
             this.TabControl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ServerIconPreview)).BeginInit();
@@ -69,6 +70,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.SkipPaperDownload);
             this.tabPage1.Controls.Add(this.ServerIconPreview);
             this.tabPage1.Controls.Add(this.ServerIconBrowseButton);
             this.tabPage1.Controls.Add(this.label5);
@@ -296,6 +298,17 @@
             this.OpenFileDialog.FileName = "server-icon.png";
             this.OpenFileDialog.Filter = "PNG Files|*.png";
             // 
+            // SkipPaperDownload
+            // 
+            this.SkipPaperDownload.AutoSize = true;
+            this.SkipPaperDownload.Location = new System.Drawing.Point(107, 321);
+            this.SkipPaperDownload.Name = "SkipPaperDownload";
+            this.SkipPaperDownload.Size = new System.Drawing.Size(139, 17);
+            this.SkipPaperDownload.TabIndex = 14;
+            this.SkipPaperDownload.Text = "Skip download of Paper";
+            this.SkipPaperDownload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.SkipPaperDownload.UseVisualStyleBackColor = true;
+            // 
             // MCServerInstaller
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -349,6 +362,7 @@
         private System.Windows.Forms.TextBox ServerIconTextBox;
         private System.Windows.Forms.OpenFileDialog OpenFileDialog;
         private System.Windows.Forms.PictureBox ServerIconPreview;
+        private System.Windows.Forms.CheckBox SkipPaperDownload;
     }
 }
 

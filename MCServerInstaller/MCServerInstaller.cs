@@ -74,11 +74,19 @@ namespace MCServerInstaller
                     Application.Exit();
                 }
             }
-            ProgressLog.AppendText(ProgressLogLang[0]);
+            if(!SkipPaperDownload.Checked)
+            {
+                ProgressLog.AppendText(ProgressLogLang[0]);
+            }
             DownloadPaper(MCVersion, rootDir, progressBar);
         }
 
-        private void ContinueDoingShit(object sender, EventArgs e)
+        private void OnPaperFinishedDownload(object sender, EventArgs e)
+        {
+            ContinueDoingShit();
+        }
+
+        private void ContinueDoingShit()
         {
             MOTD = MOTDTextBox.Text;
             Seed = SeedBox.Text;
@@ -116,16 +124,23 @@ namespace MCServerInstaller
 
         private void DownloadPaper(string VersionNumber, string path, ProgressBar progress)
         {
-            paperUri = new Uri("https://papermc.io/api/v1/paper/" + VersionNumber + "/latest/download");
-            WebClient web = new WebClient();
-            web.DownloadProgressChanged += (s, e) =>
+            if (!SkipPaperDownload.Checked)
             {
-                progress.Value = e.ProgressPercentage;
-            };
+                paperUri = new Uri("https://papermc.io/api/v1/paper/" + VersionNumber + "/latest/download");
+                WebClient web = new WebClient();
+                web.DownloadProgressChanged += (s, e) =>
+                {
+                    progress.Value = e.ProgressPercentage;
+                };
 
-            web.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(ContinueDoingShit);
-            web.DownloadFileAsync(paperUri, Path.Combine(path, paperJar));
-            web.Dispose();
+                web.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(OnPaperFinishedDownload);
+                web.DownloadFileAsync(paperUri, Path.Combine(path, paperJar));
+                web.Dispose();
+            }
+            else
+            {
+                ContinueDoingShit();
+            }
         }
 
         public static bool IsDirectoryEmpty(string path)
