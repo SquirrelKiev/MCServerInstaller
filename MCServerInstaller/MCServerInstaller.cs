@@ -17,6 +17,7 @@ namespace MCServerInstaller
         private static string MCVersion;
         private static string MOTD;
         private static string Seed;
+        private static string WorldType;
         private static string paperJar = "paper.jar";
 
         private static string[] ProgressLogLang = new string[] { "Downloading paper.jar...", "Creating start.bat...", "Agreeing to EULA...", "Creating server.properties...", "Copying server-icon.png...", "Getting IP... ", "IP found! Your IP is ", "Done! You can now close the program. " };
@@ -41,6 +42,7 @@ namespace MCServerInstaller
         private void MCServerInstaller_Load(object sender, EventArgs e)
         {
             LoadPaperVersions();
+            WorldTypeDropdown.SelectedIndex = 0;
 
             string burgerFile = Path.Combine(Application.StartupPath, "mmm burger.burger");
             if (File.Exists(burgerFile))
@@ -90,6 +92,7 @@ namespace MCServerInstaller
         {
             MOTD = MOTDTextBox.Text;
             Seed = SeedBox.Text;
+            WorldType = WorldTypeDropdown.Text;
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[1]);
             File.WriteAllText(Path.Combine(rootDir, "start.bat"), "@echo off\r\njava -Xmx1024M -Xms1024M -jar " + paperJar + " nogui\r\npause");
@@ -98,10 +101,13 @@ namespace MCServerInstaller
             File.WriteAllText(Path.Combine(rootDir, "eula.txt"), "eula=true");
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[3]);
-            File.WriteAllText(Path.Combine(rootDir, "server.properties"), "motd=" + MOTD + "\r\nspawn-protection=0" + "\r\nlevel-seed=" + Seed);
+            File.WriteAllText(Path.Combine(rootDir, "server.properties"), "motd=" + MOTD + "\r\nspawn-protection=0" + "\r\nlevel-seed=" + Seed + "\r\nlevel-type=" + WorldType);
 
             ProgressLog.AppendText("\r\n" + ProgressLogLang[4]);
             ResizedServerIcon.Save(Path.Combine(rootDir, "server-icon.png"), ImageFormat.Png);
+
+            string SerOpsJson = DoOpsJsonShit();
+            File.WriteAllText(Path.Combine(rootDir, "ops.json"), SerOpsJson);
 
             if (CopyIPCheckbox.Checked)
             {
@@ -120,6 +126,45 @@ namespace MCServerInstaller
             }
 
             MessageBox.Show(ProgressLogLang[7]);
+        }
+
+        private string DoOpsJsonShit()
+        {
+            if (OpPlayerList_User.Text != "")
+            {
+                List<UuidPlayer> opsJson = new List<UuidPlayer>();
+                opsJson = new List<UuidPlayer>();
+                try
+                {
+                    string[] Usernames = OpPlayerList_User.Text.Split(',');
+
+                    foreach (string Username in Usernames)
+                    {
+                        PlayerUuid PlayerUuidJson = GetPlayerUuid(Username);
+
+                        UuidPlayer uuidPlayer = new UuidPlayer
+                        {
+                            name = PlayerUuidJson.Name,
+                            uuid = TrimmedUuidToFull(PlayerUuidJson.Id),
+                            level = 4,
+                            bypassesPlayerLimit = false
+                        };
+
+                        opsJson.Add(uuidPlayer);
+                    }
+                    string SerOpsJson = JsonConvert.SerializeObject(opsJson, Formatting.Indented);
+                    return SerOpsJson;
+                }
+                catch
+                {
+                    MessageBox.Show("Player not found nerd");
+                    return "[]";
+                }
+            }
+            else
+            {
+                return "[]";
+            }
         }
 
         private void DownloadPaper(string VersionNumber, string path, ProgressBar progress)
@@ -168,7 +213,14 @@ namespace MCServerInstaller
             FolderPathBrowseButton.Text = "use eyes nerd";
             label2.Text = "penis wisth";
             label3.Text = "BOTD (burger of the day)";
+            label4.Text = "tiny plant";
+            label5.Text = "nekopara icon goes here";
+            label6.Text = "burger type";
+            label8.Text = "op playbers (seperate by commas with no spaces nerd)";
+            ServerIconBrowseButton.Text = "use eye";
             CopyIPCheckbox.Text = "copy doxxy numbers";
+            SkipPaperDownload.Text = "no papercuts";
+            FuckWyoming.Visible = true;
 
             FolderPathSaveFile.FileName = "cum.in.this.directory";
             FolderPathSaveFile.Title = "the cum directory";
@@ -240,11 +292,71 @@ namespace MCServerInstaller
                 MessageBox.Show("Not an Image file. Nice. ");
             }
         }
+
+        private PlayerUuid GetPlayerUuid(string PlayerName)
+        {
+            string FunnyUrl = "https://api.mojang.com/users/profiles/minecraft/";
+
+            WebClient web = new WebClient();
+            string PlayerUuidJson = web.DownloadString(FunnyUrl + PlayerName);
+            web.Dispose();
+            if(PlayerUuidJson == "")
+            {
+                throw new PlayerNotFoundException();
+            }
+            PlayerUuid deserPlayerUuid = JsonConvert.DeserializeObject<PlayerUuid>(PlayerUuidJson);
+
+            return deserPlayerUuid;
+        }
+
+        private void FuckWyoming_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private string TrimmedUuidToFull(string TrimmedUuid)
+        {
+            TrimmedUuid = TrimmedUuid.Insert(8,"-");
+            TrimmedUuid = TrimmedUuid.Insert(13, "-");
+            TrimmedUuid = TrimmedUuid.Insert(18, "-");
+            TrimmedUuid = TrimmedUuid.Insert(23, "-");
+            return TrimmedUuid;
+        }
     }
 
     public class PaperVersions
     {
         public string Project { get; set; }
         public IList<string> Versions { get; set; }
+    }
+
+    public class PlayerUuid
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+    }
+
+    public class UuidPlayer
+    {
+        public string uuid { get; set; }
+        public string name { get; set; }
+        public int level { get; set; }
+        public bool bypassesPlayerLimit { get; set; }
+    }
+
+    public class OpsJson
+    {
+        public IList<UuidPlayer> UuidPlayer { get; set; }
+    }
+
+    [Serializable]
+    public class PlayerNotFoundException : Exception
+    {
+        public PlayerNotFoundException() { }
+        public PlayerNotFoundException(string message) : base(message) { }
+        public PlayerNotFoundException(string message, Exception inner) : base(message, inner) { }
+        protected PlayerNotFoundException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }
